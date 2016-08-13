@@ -15,10 +15,22 @@ class Bootstrap extends Yaf_Bootstrap_Abstract{
 		Yaf_Registry::set('config', $arrConfig);
 	}
 
+	public function _initComposer(){
+		// 加载 composer 加载器
+        $composerConfig = Yaf\Registry::get('config')['composer'];
+        if($composerConfig['toggle'] == '1'){
+        	if(file_exists($autoloadFile = $composerConfig['directory'].'/autoload.php')){
+        		Yaf\Loader::import($autoloadFile);
+			}else{
+        		die('composer配置错误');
+			}
+		}
+	}
+
 	public function _initPlugin(Yaf_Dispatcher $dispatcher) {
 		//注册一个插件
-		$objSamplePlugin = new SamplePlugin();
-		$dispatcher->registerPlugin($objSamplePlugin);
+		$objLayoutPlugin = new LayoutPlugin();
+		$dispatcher->registerPlugin($objLayoutPlugin);
 	}
 
 	public function _initRoute(Yaf_Dispatcher $dispatcher) {
