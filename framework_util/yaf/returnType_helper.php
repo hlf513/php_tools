@@ -275,6 +275,17 @@ return [
 					'return' => 'mixed',
 				],
 		],
+	'getBody'                =>
+		[
+			'default'   =>
+				[
+					'return' => 'string',
+				],
+			'namespace' =>
+				[
+					'return' => 'string',
+				],
+		],
 	'getAppDirectory'        =>
 		[
 			'default'   =>
@@ -422,11 +433,27 @@ return [
 		[
 			'default'   =>
 				[
-					'return' => 'Yaf_Loader',
+					'Yaf_Loader'     => [
+						'return' => 'Yaf_Loader',
+					],
+					'Yaf_Session'    => [
+						'return' => 'Yaf_Session',
+					],
+					'Yaf_Dispatcher' => [
+						'return' => 'Yaf_Dispatcher'
+					]
 				],
 			'namespace' =>
 				[
-					'return' => '\Yaf\Loader',
+					'Loader'     => [
+						'return' => '\Yaf\Loader',
+					],
+					'Session'    => [
+						'return' => '\Yaf\Session',
+					],
+					'Dispatcher' => [
+						'return' => '\Yaf\Dispatcher',
+					]
 				],
 		],
 	'getLanguage'            =>
@@ -1079,3 +1106,4 @@ return [
 				],
 		],
 ];
+

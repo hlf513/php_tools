@@ -125,9 +125,17 @@ foreach ($classes as $class_name) {
 	      if(!empty($return_type[$m->getName()])){
 		      echo $indent,"/**\n";
 		      if($useNamespace){
-			      echo $indent,' * @return '. $return_type[$m->getName()]['namespace']['return']."\n";
+			      if (isset($return_type[$m->getName()]['namespace'][$class_name]['return'])) {
+			          echo $indent, ' * @return ' . $return_type[$m->getName()]['namespace'][$class_name]['return'] . "\n";
+		          }else{
+			          echo $indent,' * @return '. $return_type[$m->getName()]['namespace']['return']."\n";
+		          }
 		      }else{
-			      echo $indent,' * @return '. $return_type[$m->getName()]['default']['return']."\n";
+			      if (isset($return_type[$m->getName()]['default'][$class_name]['return'])) {
+				      echo $indent, ' * @return ' . $return_type[$m->getName()]['default'][$class_name]['return'] . "\n";
+			      }else{
+				      echo $indent,' * @return '. $return_type[$m->getName()]['default']['return']."\n";
+			      }
 		      }
 		      echo $indent," */\n";
 	      }

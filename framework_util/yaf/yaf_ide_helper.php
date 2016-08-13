@@ -186,7 +186,7 @@ namespace Yaf {
 		public function flushInstantly($flag) {
 		}
 		/**
-		 * @return \Yaf\Loader
+		 * @return \Yaf\Dispatcher
 		 */
 		public static function getInstance() {
 		}
@@ -872,6 +872,9 @@ namespace Yaf {
 		 */
 		public function clearBody($name = NULL) {
 		}
+		/**
+		 * @return string
+		 */
 		public function getBody($name = NULL) {
 		}
 		public function response() {
@@ -937,6 +940,9 @@ namespace Yaf\Response {
 		 */
 		public function clearBody($name = NULL) {
 		}
+		/**
+		 * @return string
+		 */
 		public function getBody($name = NULL) {
 		}
 	}
@@ -981,6 +987,9 @@ namespace Yaf\Response {
 		 */
 		public function clearBody($name = NULL) {
 		}
+		/**
+		 * @return string
+		 */
 		public function getBody($name = NULL) {
 		}
 		public function response() {
@@ -1587,7 +1596,7 @@ namespace Yaf {
 		private function __wakeup() {
 		}
 		/**
-		 * @return \Yaf\Loader
+		 * @return \Yaf\Session
 		 */
 		public static function getInstance() {
 		}
