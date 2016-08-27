@@ -178,7 +178,7 @@ namespace Yaf {
 		/**
 		 * @return \Yaf\Dispatcher
 		 */
-		public function autoRender($flag) {
+		public function autoRender($flag = null) {
 		}
 		/**
 		 * @return \Yaf\Dispatcher
@@ -369,6 +369,10 @@ namespace Yaf {
 		 */
 		public function getControllerName() {
 		}
+
+		/**
+		 * @return string
+		 */
 		public function getActionName() {
 		}
 		/**

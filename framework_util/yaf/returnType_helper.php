@@ -533,6 +533,17 @@ return [
 					'return' => 'string',
 				],
 		],
+	'getActionName'          =>
+		[
+			'default'   =>
+				[
+					'return' => 'string',
+				],
+			'namespace' =>
+				[
+					'return' => 'string',
+				],
+		],
 	'getParam'               =>
 		[
 			'default'   =>
