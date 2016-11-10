@@ -56,10 +56,10 @@ $rows = DB::select('Column_name,column_default,column_key')->from('INFORMATION_S
 if (empty($rows)) {
 	exit('参数错误');
 }
-$fileds = array();
+$fields = array();
 
 foreach ($rows as $row) {
-	$fileds[$row['Column_name']] = $row['column_default'];
+	$fields[$row['Column_name']] = $row['column_default'];
 	if ($row['column_key'] == 'PRI') {
 		$primary_key = $row['Column_name'];
 	}
@@ -69,9 +69,9 @@ if (empty($primary_key)) {
 	exit('没找到主键');
 }
 
-unset($fileds[$primary_key]);
+unset($fields[$primary_key]);
 
-$fileds = var_export($fileds, 1);
+$fields = var_export($fields, 1);
 
 //目录+文件
 $dir = strstr($save_path, 'Model/');
@@ -99,7 +99,7 @@ class $class_name extends Model_Common
 {
 	protected \$table = '$table' ;
 	protected \$primary_key = '$primary_key';
-	protected \$fileds = $fileds ;
+	protected \$fields = $fields ;
 	protected \$database = '$database' ;
 }
 TP;
