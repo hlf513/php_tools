@@ -12,7 +12,7 @@ assets.directory = '/assets'
 ;日志
 monolog.filename = '/tmp/time.log'
 monolog.maxfiles = 1
-monolog.level = 'debug'
+monolog.level = 'DEBUG'
 
 [product : common]
 ;db

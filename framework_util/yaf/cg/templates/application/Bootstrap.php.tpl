@@ -77,7 +77,7 @@ class Bootstrap extends Yaf_Bootstrap_Abstract
 		$monolog = new \Monolog\Logger(\Yaf\Application::app()->environ());
 		// detect and register all PHP errors in this log hence forth
 		\Monolog\ErrorHandler::register($monolog);
-		$level = sprintf('\Monolog\Logger::%s', $logConfig['level']);
+		$level = sprintf('\Monolog\Logger::%s', strtoupper($logConfig['level']));
 		$monolog->pushHandler(
 			new \Monolog\Handler\RotatingFileHandler(
 				$logConfig['filename'],

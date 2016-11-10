@@ -1,1 +1,1 @@
-module代码放这里
+module代码放这里;需要在application.ini中添加:application.modules = "a,b"

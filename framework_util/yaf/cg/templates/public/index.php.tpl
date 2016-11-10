@@ -2,6 +2,8 @@
 
 define('APPLICATION_PATH', dirname(dirname(__FILE__)));
 
+date_default_timezone_set('Asia/Shanghai');
+
 // 加载helper
 \Yaf\Loader::import(APPLICATION_PATH . '/application/helpers/error.php');
 

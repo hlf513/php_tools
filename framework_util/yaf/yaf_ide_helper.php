@@ -462,7 +462,7 @@ namespace Yaf\Request {
 		/**
 		 * @return mixed
 		 */
-		public function getQuery() {
+		public function getQuery(string $name ,string $default=null) {
 		}
 		/**
 		 * @return \Yaf\Request\Http | \Yaf\Request\Simple
@@ -472,7 +472,7 @@ namespace Yaf\Request {
 		/**
 		 * @return mixed
 		 */
-		public function getPost() {
+		public function getPost(string $name ,string $default=null) {
 		}
 		/**
 		 * @return string

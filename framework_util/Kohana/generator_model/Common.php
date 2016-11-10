@@ -53,10 +53,8 @@ class Model_Common extends Model_Database
 	 */
 	public function save($params)
 	{
-		$prefix_log = __CLASS__ . '::' . __FUNCTION__;
-
 		if (empty($params)) {
-			throw new Exception($prefix_log . '参数不能为空');
+			throw new Exception('参数不能为空');
 		}
 		// 过滤无效字符
 		$params = array_merge($this->fileds, array_intersect_key($params, $this->fileds));
@@ -69,7 +67,7 @@ class Model_Common extends Model_Database
 			->values($insert_values)
 			->execute($this->database);
 		if ($inserted_id <= 0 || $affected_rows <= 0) {
-			throw new Exception($prefix_log . '保存数据失败');
+			throw new Exception('保存数据失败');
 		}
 
 		return $inserted_id;
@@ -86,10 +84,8 @@ class Model_Common extends Model_Database
 	 */
 	public function fetch_one($id, $fields = '*')
 	{
-		$prefix_log = __CLASS__ . '::' . __FUNCTION__;
-
 		if (empty($id) || ! is_int($id)) {
-			throw new Exception($prefix_log . '参数id不能为空');
+			throw new Exception('参数id不能为空');
 		}
 
 		$row = DB::select($fields)->from($this->table)
@@ -97,7 +93,7 @@ class Model_Common extends Model_Database
 			->execute($this->database)->current();
 
 		if (empty($row)) {
-			throw new Exception($prefix_log . '数据不存在');
+			throw new Exception('数据不存在');
 		}
 
 		return $row;
@@ -114,16 +110,14 @@ class Model_Common extends Model_Database
 	 */
 	public function fetch_by_where($where, $fields = '*')
 	{
-		$prefix_log = __CLASS__ . '::' . __FUNCTION__;
-
 		if (empty($where) || ! is_array($where)) {
-			throw new Exception($prefix_log . '参数不能为空');
+			throw new Exception('参数不能为空');
 		}
 		$fetch_db = DB::select($fields)->from($this->table);
 
 		foreach ($where as $row) {
 			if (empty($row[0]) || empty($row[1]) || ! isset($row[2])) {
-				throw new Exception($prefix_log . '参数where格式错误');
+				throw new Exception('参数where格式错误');
 			}
 			$fetch_db->where($row[0], $row[1], $row[2]);
 		}
@@ -141,12 +135,10 @@ class Model_Common extends Model_Database
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function fetch_by_ids($ids, $fields = '*')
+	public function fetch_by_ids(array $ids, $fields = '*')
 	{
-		$prefix_log = __CLASS__ . '::' . __FUNCTION__;
-
 		if (empty($ids) || ! is_array($ids)) {
-			throw new Exception($prefix_log . '参数不能为空');
+			throw new Exception('参数不能为空');
 		}
 
 		$rows = DB::select($fields)->from($this->table)
@@ -154,7 +146,7 @@ class Model_Common extends Model_Database
 			->execute($this->database)->as_array($this->primary_key);
 
 		if (count($rows) == 0) {
-			throw new Exception($prefix_log . '数据不存在');
+			throw new Exception('数据不存在');
 		}
 
 		return $rows;
@@ -170,16 +162,14 @@ class Model_Common extends Model_Database
 	 */
 	public function delete_one($id)
 	{
-		$prefix_log = __CLASS__ . '::' . __FUNCTION__;
-
 		if (empty($id) || ! is_int($id)) {
-			throw new Exception($prefix_log . '参数id不能为空');
+			throw new Exception('参数id不能为空');
 		}
 
 		$affected_rows = DB::delete($this->table)->where($this->primary_key, '=', $id)->limit(1)->execute($this->database);
 
 		if ($affected_rows != 1) {
-			throw new Exception($prefix_log . '删除无效');
+			throw new Exception('删除无效');
 		}
 
 		return true;
@@ -195,27 +185,21 @@ class Model_Common extends Model_Database
 	 */
 	public function delete_by_where($where)
 	{
-		$prefix_log = __CLASS__ . '::' . __FUNCTION__;
-
 		if (empty($where) || ! is_array($where)) {
-			throw new Exception($prefix_log . '参数错误');
+			throw new Exception('参数错误');
 		}
 
 		$delete_db = DB::delete($this->table);
 		foreach ($where as $row) {
 			if (empty($row[0]) || empty($row[1]) || ! isset($row[2])) {
-				throw new Exception($prefix_log . '参数where格式错误');
+				throw new Exception('参数where格式错误');
 			}
 			$delete_db->where($row[0], $row[1], $row[2]);
 			unset($row);
 		}
 		$affected_rows = $delete_db->execute($this->database);
 
-		if ($affected_rows <= 0) {
-			throw new Exception($prefix_log . '删除无效');
-		}
-
-		return true;
+		return $affected_rows;
 	}
 
 	/**
@@ -229,10 +213,8 @@ class Model_Common extends Model_Database
 	 */
 	public function update_one($id, $updated)
 	{
-		$prefix_log = __CLASS__ . '::' . __FUNCTION__;
-
 		if (empty($updated) || ! is_array($updated) || empty($id) || ! is_int($id)) {
-			throw new Exception($prefix_log . '参数错误');
+			throw new Exception('参数错误');
 		}
 
 		$affected_rows = DB::update($this->table)->set($updated)
@@ -241,7 +223,7 @@ class Model_Common extends Model_Database
 			->execute($this->database);
 
 		if ($affected_rows != 1) {
-			throw new Exception($prefix_log . '更新无效');
+			throw new Exception('更新无效');
 		}
 
 		return true;
@@ -258,27 +240,21 @@ class Model_Common extends Model_Database
 	 */
 	public function update_by_where($where, $updated)
 	{
-		$prefix_log = __CLASS__ . '::' . __FUNCTION__;
-
 		if (empty($updated) || ! is_array($updated) || empty($where) || ! is_array($where)) {
-			throw new Exception($prefix_log . '参数错误');
+			throw new Exception('参数错误');
 		}
 
 		$update_db = DB::update($this->table)->set($updated);
 		foreach ($where as $row) {
 			if (empty($row[0]) || empty($row[1]) || ! isset($row[2])) {
-				throw new Exception($prefix_log . '参数where格式错误');
+				throw new Exception('参数where格式错误');
 			}
 			$update_db->where($row[0], $row[1], $row[2]);
 			unset($row);
 		}
 		$affected_rows = $update_db->execute($this->database);
 
-		if ($affected_rows <= 0) {
-			throw new Exception($prefix_log . '更新无效');
-		}
-
-		return true;
+		return $affected_rows;
 	}
 
 	/**
@@ -291,14 +267,13 @@ class Model_Common extends Model_Database
 	 */
 	public function count_by_where($where)
 	{
-		$prefix_log = __CLASS__ . '::' . __FUNCTION__;
 		if (empty($where) || ! is_array($where)) {
-			throw new Exception($prefix_log . '参数错误');
+			throw new Exception('参数错误');
 		}
 		$count_db = DB::select(DB::expr('count(*) total'))->from($this->table);
 		foreach ($where as $row) {
 			if (empty($row[0]) || empty($row[1]) || ! isset($row[2])) {
-				throw new Exception($prefix_log . '参数where格式错误');
+				throw new Exception('参数where格式错误');
 			}
 			$count_db->where($row[0], $row[1], $row[2]);
 			unset($row);
@@ -322,15 +297,13 @@ class Model_Common extends Model_Database
 	 */
 	public function pagination($where, $fields = 'id', $offset = 0, $group_by = '', $order_by = array())
 	{
-		$prefix_log = __CLASS__ . '::' . __FUNCTION__;
-
 		if ($fields == 'id') {
 			$fields = $this->primary_key;
 		}
 		$page_db = DB::select($fields)->from($this->table);
 		foreach ($where as $row) {
 			if (empty($row[0]) || empty($row[1]) || ! isset($row[2])) {
-				throw new Exception($prefix_log . '参数where格式错误');
+				throw new Exception('参数where格式错误');
 			}
 			$page_db->where($row[0], $row[1], $row[2]);
 			unset($row);
@@ -340,14 +313,14 @@ class Model_Common extends Model_Database
 		}
 		if ( ! empty($order_by)) {
 			if (empty($order_by[0]) || ! in_array($order_by[1], array('desc', 'asc'))) {
-				throw new Exception($prefix_log . '参数order格式错误');
+				throw new Exception('参数order格式错误');
 			}
 			$page_db->order_by($order_by[0], $order_by[1]);
 		}
 		$rows = $page_db->limit($this->page_limit)->offset($offset)->execute($this->database)->as_array($this->primary_key);
 
 		if (empty($rows)) {
-			throw new Exception($prefix_log . '没有数据');
+			throw new Exception('没有数据');
 		}
 
 		return $rows;

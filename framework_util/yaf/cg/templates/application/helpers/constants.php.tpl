@@ -13,7 +13,7 @@ define('API_RESPONSE_ERROR', 4005);
 if (empty($_SERVER['HOSTNAME']) ||
 	empty($_SERVER['DATABASE']) ||
 	empty($_SERVER['USERNAME']) ||
-	empty($_SERVER['PASSWORD']) ||
+	empty($_SERVER['PASSWORD'])
 ) {
 	generalError('env is null');
 }
