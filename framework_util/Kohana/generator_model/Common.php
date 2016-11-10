@@ -41,7 +41,7 @@ class Model_Common extends Model_Database
 	 *
 	 * @var array
 	 */
-	protected $fileds = array();
+	protected $fields = array();
 
 	/**
 	 * 新增数据
@@ -57,7 +57,7 @@ class Model_Common extends Model_Database
 			throw new Exception('参数不能为空');
 		}
 		// 过滤无效字符
-		$params = array_merge($this->fileds, array_intersect_key($params, $this->fileds));
+		$params = array_merge($this->fields, array_intersect_key($params, $this->fields));
 		if ( ! empty($params[$this->primary_key])) {
 			unset($params[$this->primary_key]);
 		};
