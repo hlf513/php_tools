@@ -14,7 +14,7 @@ $system = '../kohana/system';
 
 define('EXT', '.php');
 
-define('DOCROOT', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
+//define('DOCROOT', realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
 define('APPPATH', realpath($application) . DIRECTORY_SEPARATOR);
 define('MODPATH', realpath($modules) . DIRECTORY_SEPARATOR);
 define('SYSPATH', realpath($system) . DIRECTORY_SEPARATOR);
@@ -101,6 +101,7 @@ class $class_name extends Model_Common
 	protected \$primary_key = '$primary_key';
 	protected \$fields = $fields ;
 	protected \$database = '$database' ;
+	protected \$database_write = '$database' ;
 }
 TP;
 

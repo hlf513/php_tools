@@ -19,11 +19,17 @@ class Model_Common extends Model_Database
 	 */
 	public $page_limit = 30;
 	/**
-	 * todo 数据库名
+	 * todo 数据库名（读）
 	 *
 	 * @var string
 	 */
 	protected $database = 'default';
+	/**
+	 * todo 数据库名（写）
+	 *
+	 * @var string
+	 */
+	protected $database_write = 'default';
 	/**
 	 * todo 表名
 	 *
@@ -65,7 +71,7 @@ class Model_Common extends Model_Database
 		$insert_values = array_values($params);
 		list($inserted_id, $affected_rows) = DB::insert($this->table, $insert_fields)
 			->values($insert_values)
-			->execute($this->database);
+			->execute($this->database_write);
 		if ($inserted_id <= 0 || $affected_rows <= 0) {
 			throw new Exception('保存数据失败');
 		}
@@ -166,7 +172,7 @@ class Model_Common extends Model_Database
 			throw new Exception('参数id不能为空');
 		}
 
-		$affected_rows = DB::delete($this->table)->where($this->primary_key, '=', $id)->limit(1)->execute($this->database);
+		$affected_rows = DB::delete($this->table)->where($this->primary_key, '=', $id)->limit(1)->execute($this->database_write);
 
 		if ($affected_rows != 1) {
 			throw new Exception('删除无效');
@@ -197,7 +203,7 @@ class Model_Common extends Model_Database
 			$delete_db->where($row[0], $row[1], $row[2]);
 			unset($row);
 		}
-		$affected_rows = $delete_db->execute($this->database);
+		$affected_rows = $delete_db->execute($this->database_write);
 
 		return $affected_rows;
 	}
@@ -220,7 +226,7 @@ class Model_Common extends Model_Database
 		$affected_rows = DB::update($this->table)->set($updated)
 			->where($this->primary_key, '=', $id)
 			->limit(1)
-			->execute($this->database);
+			->execute($this->database_write);
 
 		if ($affected_rows != 1) {
 			throw new Exception('更新无效');
@@ -252,7 +258,7 @@ class Model_Common extends Model_Database
 			$update_db->where($row[0], $row[1], $row[2]);
 			unset($row);
 		}
-		$affected_rows = $update_db->execute($this->database);
+		$affected_rows = $update_db->execute($this->database_write);
 
 		return $affected_rows;
 	}
