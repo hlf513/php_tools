@@ -49,6 +49,11 @@ class Model_Common extends Model_Database
 	 */
 	protected $fields = array();
 
+	public function __construct()
+	{
+		// 修改默认连接key
+		parent::__construct($this->database);
+	}
 	/**
 	 * 新增数据
 	 *
