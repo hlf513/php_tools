@@ -19,31 +19,31 @@ class Model_Common extends Model_Database
 	 */
 	public $page_limit = 30;
 	/**
-	 * todo 数据库名（读）
+	 * 数据库名（读）
 	 *
 	 * @var string
 	 */
 	protected $database = 'default';
 	/**
-	 * todo 数据库名（写）
+	 * 数据库名（写）
 	 *
 	 * @var string
 	 */
-	protected $database_write = 'default';
+	protected $database_write = 'write';
 	/**
-	 * todo 表名
+	 * 表名
 	 *
 	 * @var string
 	 */
 	protected $table = 'table';
 	/**
-	 * todo 主键
+	 * 主键
 	 *
 	 * @var string
 	 */
 	protected $primary_key = 'id';
 	/**
-	 * todo 数据表字段
+	 * 数据表字段
 	 *
 	 * @var array
 	 */
@@ -51,18 +51,19 @@ class Model_Common extends Model_Database
 
 	public function __construct()
 	{
-		// 修改默认连接key
 		parent::__construct($this->database);
 	}
+
 	/**
 	 * 新增数据
 	 *
 	 * @param array $params
+	 * @param bool  $throw
 	 *
 	 * @return int 插入的后ID
 	 * @throws \Exception
 	 */
-	public function save($params)
+	public function save($params, $throw = false)
 	{
 		if (empty($params)) {
 			throw new Exception('参数不能为空');
@@ -72,12 +73,16 @@ class Model_Common extends Model_Database
 		if ( ! empty($params[$this->primary_key])) {
 			unset($params[$this->primary_key]);
 		};
+		if (isset($this->fields['created_at'])) {
+			$params['created_at'] = date('Y-m-d H:i:s');
+		}
 		$insert_fields = array_keys($params);
 		$insert_values = array_values($params);
 		list($inserted_id, $affected_rows) = DB::insert($this->table, $insert_fields)
 			->values($insert_values)
 			->execute($this->database_write);
-		if ($inserted_id <= 0 || $affected_rows <= 0) {
+
+		if ($throw && ($inserted_id <= 0 || $affected_rows <= 0)) {
 			throw new Exception('保存数据失败');
 		}
 
@@ -89,11 +94,12 @@ class Model_Common extends Model_Database
 	 *
 	 * @param int    $id
 	 * @param string $fields
+	 * @param bool   $throw
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function fetch_one($id, $fields = '*')
+	public function fetch_one_by_id($id, $fields = '*', $throw = false)
 	{
 		if (empty($id) || ! is_int($id)) {
 			throw new Exception('参数id不能为空');
@@ -103,7 +109,37 @@ class Model_Common extends Model_Database
 			->where($this->primary_key, '=', $id)
 			->execute($this->database)->current();
 
-		if (empty($row)) {
+		if ($throw && empty($row)) {
+			throw new Exception('数据不存在');
+		}
+
+		return $row;
+	}
+
+	/**
+	 * 获取一条数据
+	 *
+	 * @param array  $where
+	 * @param string $fields
+	 * @param bool   $throw
+	 *
+	 * @return mixed
+	 * @throws \Exception
+	 */
+	public function fetch_one($where, $fields = "*", $throw = false)
+	{
+		if (empty($where) || ! is_array($where)) {
+			throw new Exception('参数不能为空');
+		}
+		$fetch_db = DB::select($fields)->from($this->table);
+		foreach ($where as $row) {
+			if (empty($row[0]) || empty($row[1]) || ! isset($row[2])) {
+				throw new Exception('参数where格式错误');
+			}
+			$fetch_db->where($row[0], $row[1], $row[2]);
+		}
+		$row = $fetch_db->limit(1)->execute($this->database)->current();
+		if ($throw && empty($row)) {
 			throw new Exception('数据不存在');
 		}
 
@@ -115,11 +151,12 @@ class Model_Common extends Model_Database
 	 *
 	 * @param array  $where
 	 * @param string $fields
+	 * @param bool   $throw
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function fetch_by_where($where, $fields = '*')
+	public function fetch_by_where($where, $fields = '*', $throw = false)
 	{
 		if (empty($where) || ! is_array($where)) {
 			throw new Exception('参数不能为空');
@@ -134,6 +171,10 @@ class Model_Common extends Model_Database
 		}
 		$row = $fetch_db->execute($this->database)->as_array($this->primary_key);
 
+		if ($throw && empty($row)) {
+			throw new Exception('数据不存在');
+		}
+
 		return $row;
 	}
 
@@ -142,11 +183,12 @@ class Model_Common extends Model_Database
 	 *
 	 * @param array  $ids
 	 * @param string $fields
+	 * @param bool   $throw
 	 *
 	 * @return array
 	 * @throws \Exception
 	 */
-	public function fetch_by_ids(array $ids, $fields = '*')
+	public function fetch_by_ids(array $ids, $fields = '*', $throw = false)
 	{
 		if (empty($ids) || ! is_array($ids)) {
 			throw new Exception('参数不能为空');
@@ -156,7 +198,7 @@ class Model_Common extends Model_Database
 			->where($this->primary_key, 'in', $ids)
 			->execute($this->database)->as_array($this->primary_key);
 
-		if (count($rows) == 0) {
+		if ($throw && count($rows) == 0) {
 			throw new Exception('数据不存在');
 		}
 
@@ -166,12 +208,13 @@ class Model_Common extends Model_Database
 	/**
 	 * 根据ID删除一条数据
 	 *
-	 * @param int $id
+	 * @param int  $id
+	 * @param bool $throw
 	 *
 	 * @return bool
 	 * @throws \Exception
 	 */
-	public function delete_one($id)
+	public function delete_one_by_id($id, $throw = false)
 	{
 		if (empty($id) || ! is_int($id)) {
 			throw new Exception('参数id不能为空');
@@ -179,7 +222,7 @@ class Model_Common extends Model_Database
 
 		$affected_rows = DB::delete($this->table)->where($this->primary_key, '=', $id)->limit(1)->execute($this->database_write);
 
-		if ($affected_rows != 1) {
+		if ($throw && $affected_rows != 1) {
 			throw new Exception('删除无效');
 		}
 
@@ -190,11 +233,12 @@ class Model_Common extends Model_Database
 	 * 根据where批量删除数据
 	 *
 	 * @param array $where
+	 * @param bool  $throw
 	 *
 	 * @return bool
 	 * @throws \Exception
 	 */
-	public function delete_by_where($where)
+	public function delete_by_where($where, $throw = false)
 	{
 		if (empty($where) || ! is_array($where)) {
 			throw new Exception('参数错误');
@@ -209,6 +253,9 @@ class Model_Common extends Model_Database
 			unset($row);
 		}
 		$affected_rows = $delete_db->execute($this->database_write);
+		if ($throw && $affected_rows == 0) {
+			throw new Exception('删除失败');
+		}
 
 		return $affected_rows;
 	}
@@ -218,14 +265,19 @@ class Model_Common extends Model_Database
 	 *
 	 * @param int   $id
 	 * @param array $updated
+	 * @param bool  $throw
 	 *
 	 * @return bool
 	 * @throws \Exception
 	 */
-	public function update_one($id, $updated)
+	public function update_one_by_id($id, $updated, $throw = false)
 	{
 		if (empty($updated) || ! is_array($updated) || empty($id) || ! is_int($id)) {
 			throw new Exception('参数错误');
+		}
+		if (isset($this->fields['updated_at'])) {
+			unset($updated['created_at']);
+			$updated['updated_at'] = date('Y-m-d H:i:s');
 		}
 
 		$affected_rows = DB::update($this->table)->set($updated)
@@ -233,7 +285,7 @@ class Model_Common extends Model_Database
 			->limit(1)
 			->execute($this->database_write);
 
-		if ($affected_rows != 1) {
+		if ($throw && $affected_rows != 1) {
 			throw new Exception('更新无效');
 		}
 
@@ -245,14 +297,19 @@ class Model_Common extends Model_Database
 	 *
 	 * @param array $where
 	 * @param array $updated
+	 * @param bool  $throw
 	 *
 	 * @return bool
 	 * @throws \Exception
 	 */
-	public function update_by_where($where, $updated)
+	public function update_by_where($where, $updated, $throw = false)
 	{
 		if (empty($updated) || ! is_array($updated) || empty($where) || ! is_array($where)) {
 			throw new Exception('参数错误');
+		}
+		if (isset($this->fields['updated_at'])) {
+			unset($updated['created_at']);
+			$updated['updated_at'] = date('Y-m-d H:i:s');
 		}
 
 		$update_db = DB::update($this->table)->set($updated);
@@ -263,7 +320,12 @@ class Model_Common extends Model_Database
 			$update_db->where($row[0], $row[1], $row[2]);
 			unset($row);
 		}
+
 		$affected_rows = $update_db->execute($this->database_write);
+
+		if ($throw && $affected_rows != 1) {
+			throw new Exception('更新无效');
+		}
 
 		return $affected_rows;
 	}
@@ -337,3 +399,4 @@ class Model_Common extends Model_Database
 		return $rows;
 	}
 }
+
