@@ -297,12 +297,13 @@ class Model_Common extends Model_Database
 	 *
 	 * @param array $where
 	 * @param array $updated
+	 * @param int|null $limit
 	 * @param bool  $throw
 	 *
 	 * @return bool
 	 * @throws \Exception
 	 */
-	public function update_by_where($where, $updated, $throw = false)
+	public function update_by_where($where, $updated, $limit = null $throw = false)
 	{
 		if (empty($updated) || ! is_array($updated) || empty($where) || ! is_array($where)) {
 			throw new Exception('参数错误');
@@ -319,6 +320,10 @@ class Model_Common extends Model_Database
 			}
 			$update_db->where($row[0], $row[1], $row[2]);
 			unset($row);
+		}
+
+		if ( ! is_null($limit) && $limit > 0) {
+			$update_db->limit($limit);
 		}
 
 		$affected_rows = $update_db->execute($this->database_write);
